@@ -1,0 +1,60 @@
+### Obtener Mensaje de Bienvenida
+GET http://localhost:3000/
+Accept: application/json
+
+### Obtener Todas las Frutas
+GET http://localhost:3000/frutas/all
+Accept: application/json
+
+### Obtener Fruta por ID (Existente - ID: 1)
+GET http://localhost:3000/frutas/id/1
+Accept: application/json
+
+### Obtener Fruta por ID (Existente - ID: 4)
+GET http://localhost:3000/frutas/id/4
+Accept: application/json
+
+### Obtener Fruta por ID (No Existente - ID: 999)
+GET http://localhost:3000/frutas/id/999
+Accept: application/json
+
+### Obtener Fruta por ID (ID Inválido - texto)
+GET http://localhost:3000/frutas/id/abc
+Accept: application/json
+
+### Buscar Frutas por Nombre (Parcial - "manz")
+GET http://localhost:3000/frutas/nombre/manz
+Accept: application/json
+
+### Buscar Frutas por Nombre (Parcial - "a")
+GET http://localhost:3000/frutas/nombre/a
+Accept: application/json
+
+### Buscar Frutas por Nombre (Parcial - No Coincide - "platano")
+GET http://localhost:3000/frutas/nombre/platano
+Accept: application/json
+
+### Verificar si Existe una Fruta por Nombre (Exacto - "manzana")
+GET http://localhost:3000/frutas/existe/manzana
+Accept: application/json
+
+### Verificar si Existe una Fruta por Nombre (Exacto - "ManZana" - Case-insensitive)
+GET http://localhost:3000/frutas/existe/ManZana
+Accept: application/json
+
+### Verificar si Existe una Fruta por Nombre (Exacto - No Existe - "kiwi")
+GET http://localhost:3000/frutas/existe/kiwi
+Accept: application/json
+
+### Verificar si Existe una Fruta por Nombre (Exacto - Nombre Parcial - "manz")
+GET http://localhost:3000/frutas/existe/manz
+Accept: application/json
+# Nota: Esta debería devolver { "existe": false } porque la búsqueda es exacta.
+
+### Ruta No Encontrada (Error 404)
+GET http://localhost:3000/ruta/inexistente
+Accept: application/json
+
+### Otra Ruta No Encontrada (Error 404)
+GET http://localhost:3000/frutas/invalid/path
+Accept: application/json
