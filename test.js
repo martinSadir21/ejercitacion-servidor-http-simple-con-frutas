@@ -165,10 +165,10 @@ async function ejecutarTests () {
 
     try {
       // Test: Existe (nombre exacto case-insensitive)
-      const res = await realizarPeticion('/frutas/existe/BaNaNnA');
-      assert.strictEqual(res.statusCode, 200, 'Test /frutas/existe/BaNaNnA: Status code debe ser 200');
-      assert.strictEqual(typeof res.body.existe, 'boolean', 'Test /frutas/existe/BaNaNnA: Body debe tener propiedad "existe" booleana');
-      assert.strictEqual(res.body.existe, true, 'Test /frutas/existe/BaNaNnA: La propiedad "existe" debe ser true');
+      const res = await realizarPeticion('/frutas/existe/BaNaNa');
+      assert.strictEqual(res.statusCode, 200, 'Test /frutas/existe/BaNaNa: Status code debe ser 200');
+      assert.strictEqual(typeof res.body.existe, 'boolean', 'Test /frutas/existe/BaNaNa: Body debe tener propiedad "existe" booleana');
+      assert.strictEqual(res.body.existe, true, 'Test /frutas/existe/BaNaNa: La propiedad "existe" debe ser true');
       console.log('✅ Verificar existencia (case-insensitive) OK');
       testsPasados++;
     } catch (error) {
