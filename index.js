@@ -1,49 +1,76 @@
 const http = require('http');
 const url = require('url');
+const fs = require('fs');
 
-// Cambiar esta función por la lectura del archivo de frutas con fs
-function leerFrutas() { 
-  const frutasData = [
-    { id: 1, nombre: 'manzana', color: 'rojo' },
-    { id: 2, nombre: 'banana', color: 'amarillo' },
-    { id: 3, nombre: 'naranja', color: 'naranja' },
-    { id: 4, nombre: 'uva', color: 'morado' },
-    { id: 5, nombre: 'fresa', color: 'rojo' },
-    { id: 6, nombre: 'manzana verde', color: 'verde' }
-  ];
-  console.log("Simulando lectura de frutas...");
-  return frutasData;
-}
+// Leer y parsear frutas.json una sola vez al inicio
+const frutas = JSON.parse(fs.readFileSync('./frutas.json', 'utf-8'));
 
-// Crear el servidor HTTP
+// Crear servidor
 const servidor = http.createServer((req, res) => {
-  // Configurar el header de respuesta como JSON
+  const { pathname } = url.parse(req.url);
   res.setHeader('Content-Type', 'application/json');
-  
-  // Obtener la ruta de la URL
-  const path = url.parse(req.url).pathname;
-  
-  // TODO: Implementar el manejo de las siguientes rutas:
-  // 1. '/' - Mensaje de bienvenida
-  // 2. '/frutas/all' - Devolver todas las frutas
-  // 3. '/frutas/id/123' - Devolver una fruta por su ID
-  // 4. '/frutas/nombre/manzana' - Buscar frutas por nombre (parcial)
-  // 5. '/frutas/existe/manzana' - Verificar si existe una fruta
-  // 6. Cualquier otra ruta - Error 404
-  
-  // Por ahora, devolvemos un 404 para todas las rutas
+
+  // Ruta de bienvenida
+  if (pathname === '/') {
+    res.statusCode = 200;
+    res.end(JSON.stringify({ mensaje: 'Bienvenido al servidor de frutas 🍉🍌🍎' }));
+    return;
+  }
+
+  // Ruta /frutas/all => devuelve todo
+  if (pathname === '/frutas/all') {
+    res.statusCode = 200;
+    res.end(JSON.stringify(frutas));
+    return;
+  }
+
+  // Ruta /frutas/id/:numero
+  if (pathname.startsWith('/frutas/id/')) {
+    const partes = pathname.split('/');
+    const id = parseInt(partes[3]);
+    const fruta = frutas.find(f => f.id === id);
+    if (fruta) {
+      res.statusCode = 200;
+      res.end(JSON.stringify(fruta));
+    } else {
+      res.statusCode = 404;
+      res.end(JSON.stringify({ error: `No existe fruta con id ${id}` }));
+    }
+    return;
+  }
+
+  // Ruta /frutas/nombre/:nombre (búsqueda parcial, case insensitive)
+  if (pathname.startsWith('/frutas/nombre/')) {
+    const partes = pathname.split('/');
+    const nombreBuscado = decodeURIComponent(partes[3]).toLowerCase();
+    const coincidencias = frutas.filter(f => f.nombre.toLowerCase().includes(nombreBuscado));
+    res.statusCode = 200;
+    res.end(JSON.stringify(coincidencias));
+    return;
+  }
+
+  // Ruta /frutas/existe/:nombre (exacto, case insensitive)
+  if (pathname.startsWith('/frutas/existe/')) {
+    const partes = pathname.split('/');
+    const nombreBuscado = decodeURIComponent(partes[3]).toLowerCase();
+    const existe = frutas.some(f => f.nombre.toLowerCase() === nombreBuscado);
+    res.statusCode = 200;
+    res.end(JSON.stringify({ existe }));
+    return;
+  }
+
+  // Cualquier otra ruta
   res.statusCode = 404;
   res.end(JSON.stringify({ error: 'Ruta no encontrada' }));
 });
 
-// Iniciar el servidor
-const PUERTO = 3000;
-servidor.listen(PUERTO, () => {
-  console.log(`Servidor corriendo en http://localhost:${PUERTO}/`);
-  console.log(`Rutas disponibles:`);
-  console.log(`- http://localhost:${PUERTO}/`);
-  console.log(`- http://localhost:${PUERTO}/frutas/all`);
-  console.log(`- http://localhost:${PUERTO}/frutas/id/:id`);
-  console.log(`- http://localhost:${PUERTO}/frutas/nombre/:nombre`);
-  console.log(`- http://localhost:${PUERTO}/frutas/existe/:nombre`);
+// Iniciar servidor
+const PORT = 3000;
+servidor.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log('Rutas:');
+  console.log('- /frutas/all');
+  console.log('- /frutas/id/:id');
+  console.log('- /frutas/nombre/:nombre');
+  console.log('- /frutas/existe/:nombre');
 });
